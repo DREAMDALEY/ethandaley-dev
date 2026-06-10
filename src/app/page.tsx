@@ -107,9 +107,8 @@ export default async function Home() {
           What I&apos;m Building
         </h1>
         <p style={{ maxWidth: 660, lineHeight: 1.75, opacity: 0.92, margin: 0, fontSize: "1rem" }}>
-          I learned to build by building — shipping the products my companies needed straight
-          into live use. This is the raw view: what I run, the stack I reach for, and live
-          GitHub activity.
+          I build what the market actually wants — premium, efficient, and earned. This is the
+          raw view: what I run, the stack I reach for, and live GitHub activity.
         </p>
       </header>
 
