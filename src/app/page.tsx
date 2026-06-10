@@ -1,141 +1,36 @@
-type Status = "LIVE" | "BUILDING";
+import { getProjects, getProfile } from "@/lib/data";
+import ContributionGraph from "@/components/ContributionGraph";
 
-type Project = {
-  name: string;
-  status: Status;
-  description: string;
-  repo?: string;
-  link?: string;
-};
-
-const projects: Project[] = [
-  {
-    name: "Citadel",
-    status: "BUILDING",
-    description:
-      "Secure AI desktop app for local model inference. Custom Dream model substrate, Electron, RAG memory layer.",
-  },
-  {
-    name: "Dream Model",
-    status: "BUILDING",
-    description:
-      "TNAADO Labs' proprietary AI model family. Substrate base training, substrate-modulated adapters.",
-  },
-  {
-    name: "GEB — Gesture Beats",
-    status: "BUILDING",
-    description:
-      "React Native music app. AI-powered gesture recognition for beat creation.",
-    repo: "TNAADO-Labs-Inc/geb",
-    link: "https://github.com/TNAADO-Labs-Inc/geb",
-  },
-  {
-    name: "Command Central",
-    status: "LIVE",
-    description:
-      "Discord-based ops hub for TNAADO Labs Miami. Auto-recording, event management, team coordination bot.",
-  },
-  {
-    name: "tnaado.com",
-    status: "LIVE",
-    description:
-      "TNAADO Labs company site. Next.js, custom CMS, Supabase backend.",
-    repo: "TNAADO-Labs-Inc/tnaado-com",
-    link: "https://github.com/TNAADO-Labs-Inc/tnaado-com",
-  },
-  {
-    name: "dreamdaley.ca",
-    status: "LIVE",
-    description:
-      "Personal brand site. Next.js App Router, Framer Motion, Supabase.",
-    repo: "DREAMDALEY/dreamdaleysite",
-    link: "https://github.com/DREAMDALEY/dreamdaleysite",
-  },
-  {
-    name: "merch.dreamdaley.ca",
-    status: "LIVE",
-    description:
-      "Merch drop site. Next.js, Stripe Checkout, Printful print-on-demand.",
-    repo: "DREAMDALEY/merch-dreamdaley",
-    link: "https://github.com/DREAMDALEY/merch-dreamdaley",
-  },
-  {
-    name: "photos.tnaado.ca",
-    status: "LIVE",
-    description:
-      "Photography stock store. Watermarked previews, Stripe payments, Supabase storage.",
-    repo: "DREAMDALEY/photos.tnaado.ca",
-    link: "https://github.com/DREAMDALEY/photos.tnaado.ca",
-  },
-  {
-    name: "Sam The Man",
-    status: "BUILDING",
-    description: "Realtor personal brand site. Editorial look, no fake stats.",
-  },
-  {
-    name: "Music Rights Clearance",
-    status: "LIVE",
-    description:
-      "Client site for music licensing. Supabase, contact flows, docs.",
-    repo: "DREAMDALEY/musicrightsclearance.com",
-    link: "https://github.com/DREAMDALEY/musicrightsclearance.com",
-  },
-  {
-    name: "WILDIN",
-    status: "LIVE",
-    description: "Event/social app site + CRM. Live at wildin.app.",
-    repo: "DREAMDALEY/WILDIN-site-crm",
-    link: "https://github.com/DREAMDALEY/WILDIN-site-crm",
-  },
-  {
-    name: "Claude Vault",
-    status: "BUILDING",
-    description:
-      "macOS Keychain CLI + SwiftUI app for managing secrets across projects.",
-  },
-];
-
-const stack: { group: string; items: string[] }[] = [
-  {
-    group: "Core",
-    items: [
-      "Next.js",
-      "TypeScript",
-      "React",
-      "Supabase",
-      "Tailwind CSS",
-      "Vercel",
-    ],
-  },
-  {
-    group: "Regular",
-    items: [
-      "Python",
-      "PostgreSQL",
-      "Stripe",
-      "Node.js",
-      "Electron",
-      "Expo / React Native",
-    ],
-  },
-  {
-    group: "Tools & Services",
-    items: [
-      "Framer Motion",
-      "shadcn/ui",
-      "Printful API",
-      "Resend",
-      "Hetzner",
-      "Cloudflare",
-    ],
-  },
-];
+export const dynamic = "force-dynamic";
 
 const RED = "#C8102E";
 const GREEN = "#00c850";
 
-function StatusBadge({ status }: { status: Status }) {
-  const live = status === "LIVE";
+const stack: { group: string; items: string[] }[] = [
+  {
+    group: "Core",
+    items: ["Next.js", "TypeScript", "React", "Supabase", "Tailwind CSS", "Vercel"],
+  },
+  {
+    group: "Regular",
+    items: ["Python", "PostgreSQL", "Stripe", "Node.js", "Electron", "Expo / React Native"],
+  },
+  {
+    group: "Tools & Services",
+    items: ["Framer Motion", "shadcn/ui", "Printful API", "Resend", "Hetzner", "Cloudflare"],
+  },
+];
+
+function StatusBadge({ status }: { status: string }) {
+  const s = (status || "").toLowerCase();
+  const live = s === "live";
+  const paused = s === "paused";
+  const color = live ? GREEN : paused ? "#999" : RED;
+  const bg = live
+    ? "rgba(0,200,80,0.1)"
+    : paused
+    ? "rgba(150,150,150,0.12)"
+    : "rgba(200,16,46,0.1)";
   return (
     <span
       style={{
@@ -144,25 +39,34 @@ function StatusBadge({ status }: { status: Status }) {
         padding: "0.2rem 0.55rem",
         borderRadius: 3,
         fontWeight: 700,
-        background: live ? "rgba(0,200,80,0.1)" : "rgba(200,16,46,0.1)",
-        color: live ? GREEN : RED,
+        background: bg,
+        color,
         whiteSpace: "nowrap",
       }}
     >
-      {status}
+      {status.toUpperCase()}
     </span>
   );
 }
 
-export default function Home() {
+function repoLabel(url: string): string {
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes("github.com")) return u.pathname.replace(/^\//, "");
+    return u.hostname + u.pathname.replace(/\/$/, "");
+  } catch {
+    return url;
+  }
+}
+
+export default async function Home() {
+  const [projects, profile] = await Promise.all([getProjects(), getProfile()]);
+
+  const storyParas = (profile.story || "").split("\n").filter((p) => p.trim());
+  const styleParas = (profile.building_style || "").split("\n").filter((p) => p.trim());
+
   return (
-    <main
-      style={{
-        maxWidth: 900,
-        margin: "0 auto",
-        padding: "2.5rem 1.5rem 0",
-      }}
-    >
+    <main style={{ maxWidth: 900, margin: "0 auto", padding: "2.5rem 1.5rem 0" }}>
       {/* Top nav */}
       <nav
         style={{
@@ -179,14 +83,7 @@ export default function Home() {
 
       {/* Hero */}
       <header style={{ marginTop: "3rem", marginBottom: "3.5rem" }}>
-        <p
-          style={{
-            fontSize: "0.8rem",
-            letterSpacing: "0.2em",
-            opacity: 0.55,
-            margin: 0,
-          }}
-        >
+        <p style={{ fontSize: "0.8rem", letterSpacing: "0.2em", opacity: 0.55, margin: 0 }}>
           Ethan Daley · Dev
         </p>
         <h1
@@ -200,43 +97,62 @@ export default function Home() {
         >
           What I&apos;m Building
         </h1>
-        <p
-          style={{
-            maxWidth: 640,
-            lineHeight: 1.7,
-            opacity: 0.8,
-            margin: 0,
-            fontSize: "0.95rem",
-          }}
-        >
-          Founder first, builder by necessity. I ship the products I run — from
-          AI infrastructure to consumer apps. This page is the raw view: stack,
-          repos, and live GitHub activity.
+        <p style={{ maxWidth: 640, lineHeight: 1.7, opacity: 0.8, margin: 0, fontSize: "0.95rem" }}>
+          Founder first, builder by necessity. I ship the products I run — from AI
+          infrastructure to consumer apps. This page is the raw view: stack, repos, and live
+          GitHub activity.
         </p>
       </header>
 
-      {/* GitHub activity */}
+      {/* GitHub activity — interactive */}
       <section style={{ marginBottom: "3.5rem" }}>
         <h2 style={sectionTitle}>GitHub Activity</h2>
-        <div style={{ display: "grid", gap: "1.5rem" }}>
-          <div style={card}>
-            <p style={subLabel}>Contribution Graph</p>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://ghchart.rshah.org/C8102E/DREAMDALEY"
-              alt="Ethan Daley GitHub contribution graph"
-              style={{ filter: "brightness(0.9) contrast(1.1)", width: "100%" }}
-            />
-          </div>
-          <div style={card}>
-            <p style={subLabel}>Stats</p>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://github-readme-stats.vercel.app/api?username=DREAMDALEY&show_icons=true&theme=dark&bg_color=080808&title_color=EFEFEF&text_color=888&icon_color=C8102E&border_color=222&hide_border=false&rank_icon=github"
-              alt="Ethan Daley GitHub stats"
-              style={{ filter: "brightness(0.9) contrast(1.1)" }}
-            />
-          </div>
+        <div style={card}>
+          <p style={subLabel}>Contributions — last year (live)</p>
+          <ContributionGraph />
+        </div>
+      </section>
+
+      {/* Story */}
+      <section style={{ marginBottom: "3.5rem" }}>
+        <h2 style={sectionTitle}>The Story</h2>
+        <div style={{ ...card, lineHeight: 1.8 }}>
+          {storyParas.map((p, i) => (
+            <p
+              key={i}
+              style={{
+                margin: i === 0 ? "0 0 1rem" : "0 0 1rem",
+                fontSize: "0.92rem",
+                opacity: i === 0 ? 0.95 : 0.78,
+              }}
+            >
+              {p}
+            </p>
+          ))}
+        </div>
+      </section>
+
+      {/* Building style */}
+      <section style={{ marginBottom: "3.5rem" }}>
+        <h2 style={sectionTitle}>How I Build</h2>
+        <div style={{ ...card, lineHeight: 1.8 }}>
+          {styleParas.map((p, i) => {
+            const isPoint = p.trim().startsWith("—");
+            return (
+              <p
+                key={i}
+                style={{
+                  margin: "0 0 0.9rem",
+                  fontSize: "0.9rem",
+                  opacity: isPoint ? 0.82 : 0.95,
+                  borderLeft: isPoint ? `2px solid ${RED}` : "none",
+                  paddingLeft: isPoint ? "0.75rem" : 0,
+                }}
+              >
+                {isPoint ? p.replace(/^—\s*/, "") : p}
+              </p>
+            );
+          })}
         </div>
       </section>
 
@@ -251,7 +167,7 @@ export default function Home() {
           }}
         >
           {projects.map((p) => (
-            <div key={p.name} style={card}>
+            <div key={p.id} style={card}>
               <div
                 style={{
                   display: "flex",
@@ -264,19 +180,12 @@ export default function Home() {
                 <h3 style={{ margin: 0, fontSize: "1rem" }}>{p.name}</h3>
                 <StatusBadge status={p.status} />
               </div>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: "0.8rem",
-                  lineHeight: 1.6,
-                  opacity: 0.7,
-                }}
-              >
-                {p.description}
+              <p style={{ margin: 0, fontSize: "0.8rem", lineHeight: 1.6, opacity: 0.7 }}>
+                {p.blurb}
               </p>
-              {p.repo && p.link && (
+              {p.url && (
                 <a
-                  href={p.link}
+                  href={p.url}
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
@@ -286,7 +195,7 @@ export default function Home() {
                     color: RED,
                   }}
                 >
-                  {p.repo} →
+                  {repoLabel(p.url)} →
                 </a>
               )}
             </div>
@@ -307,13 +216,7 @@ export default function Home() {
           {stack.map((s) => (
             <div key={s.group} style={card}>
               <p style={subLabel}>{s.group}</p>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: "0.5rem",
-                }}
-              >
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                 {s.items.map((item) => (
                   <span
                     key={item}
@@ -369,10 +272,11 @@ const sectionTitle: React.CSSProperties = {
 };
 
 const card: React.CSSProperties = {
-  background: "#0c0c0c",
+  background: "rgba(12,12,12,0.72)",
   border: "1px solid #161616",
   borderRadius: 8,
   padding: "1.25rem",
+  backdropFilter: "blur(2px)",
 };
 
 const subLabel: React.CSSProperties = {

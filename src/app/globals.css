@@ -19,6 +19,34 @@ body {
   font-family: "Courier New", Courier, monospace;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  position: relative;
+  min-height: 100%;
+}
+
+/* Fixed, darkened hero background so foreground text stays readable */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image: url("/hero-bg.png");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  opacity: 0.35;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 8, 8, 0.78) 0%,
+    rgba(8, 8, 8, 0.88) 45%,
+    rgba(8, 8, 8, 0.95) 100%
+  );
 }
 
 a {
