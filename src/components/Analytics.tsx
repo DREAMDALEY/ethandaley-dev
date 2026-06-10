@@ -4,9 +4,13 @@ import { useEffect } from 'react';
 
 const SITE = 'ethandaley.dev';
 
-const SUPABASE_URL =
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://wecacgalccnsjjgczyja.supabase.co';
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+// Beacon targets the dedicated Dream Daley analytics DB via its own env var,
+// independent of this site's other Supabase config.
+const SUPABASE_URL = 'https://wecacgalccnsjjgczyja.supabase.co';
+const SUPABASE_ANON_KEY =
+  process.env.NEXT_PUBLIC_ANALYTICS_SUPABASE_ANON_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  '';
 
 export default function Analytics() {
   useEffect(() => {
