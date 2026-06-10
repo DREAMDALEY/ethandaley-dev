@@ -75,7 +75,6 @@ export default async function Home() {
 
   return (
     <main style={{ position: "relative", zIndex: 1, maxWidth: 900, margin: "0 auto", padding: "2.5rem 1.5rem 0" }}>
-      <div className="dd-watermark" aria-hidden />
       {/* Top nav */}
       <nav
         style={{
