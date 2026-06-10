@@ -8,16 +8,24 @@ const GREEN = "#00c850";
 
 const stack: { group: string; items: string[] }[] = [
   {
-    group: "Core",
-    items: ["Next.js", "TypeScript", "React", "Supabase", "Tailwind CSS", "Vercel"],
+    group: "Languages",
+    items: ["TypeScript", "JavaScript", "Python", "SQL", "Swift", "Bash"],
   },
   {
-    group: "Regular",
-    items: ["Python", "PostgreSQL", "Stripe", "Node.js", "Electron", "Expo / React Native"],
+    group: "Frontend",
+    items: ["Next.js", "React", "React Native / Expo", "Tailwind CSS", "Framer Motion", "shadcn/ui"],
   },
   {
-    group: "Tools & Services",
-    items: ["Framer Motion", "shadcn/ui", "Printful API", "Resend", "Hetzner", "Cloudflare"],
+    group: "Backend & Data",
+    items: ["Node.js", "Supabase", "PostgreSQL", "Stripe", "Resend", "Electron"],
+  },
+  {
+    group: "Infra & Deploy",
+    items: ["Vercel", "Hetzner", "Cloudflare", "Docker", "GitHub Actions"],
+  },
+  {
+    group: "AI & Workflow",
+    items: ["Agentic workflows", "Claude / Anthropic API", "OpenAI / gpt-image-1", "Discord.js", "Git"],
   },
 ];
 
@@ -66,7 +74,8 @@ export default async function Home() {
   const styleParas = (profile.building_style || "").split("\n").filter((p) => p.trim());
 
   return (
-    <main style={{ maxWidth: 900, margin: "0 auto", padding: "2.5rem 1.5rem 0" }}>
+    <main style={{ position: "relative", zIndex: 1, maxWidth: 900, margin: "0 auto", padding: "2.5rem 1.5rem 0" }}>
+      <div className="dd-watermark" aria-hidden />
       {/* Top nav */}
       <nav
         style={{
@@ -74,7 +83,7 @@ export default async function Home() {
           justifyContent: "space-between",
           alignItems: "center",
           fontSize: "0.85rem",
-          opacity: 0.7,
+          opacity: 0.8,
         }}
       >
         <a href="https://dreamdaley.ca">← dreamdaley.ca</a>
@@ -97,9 +106,9 @@ export default async function Home() {
         >
           What I&apos;m Building
         </h1>
-        <p style={{ maxWidth: 640, lineHeight: 1.7, opacity: 0.8, margin: 0, fontSize: "0.95rem" }}>
-          Founder first, builder by necessity. I ship the products I run — from AI
-          infrastructure to consumer apps. This page is the raw view: stack, repos, and live
+        <p style={{ maxWidth: 660, lineHeight: 1.75, opacity: 0.92, margin: 0, fontSize: "1rem" }}>
+          I learned to build by building — shipping the products my companies needed straight
+          into live use. This is the raw view: what I run, the stack I reach for, and live
           GitHub activity.
         </p>
       </header>
@@ -123,7 +132,7 @@ export default async function Home() {
               style={{
                 margin: i === 0 ? "0 0 1rem" : "0 0 1rem",
                 fontSize: "0.92rem",
-                opacity: i === 0 ? 0.95 : 0.78,
+                opacity: i === 0 ? 0.96 : 0.88,
               }}
             >
               {p}
@@ -144,7 +153,7 @@ export default async function Home() {
                 style={{
                   margin: "0 0 0.9rem",
                   fontSize: "0.9rem",
-                  opacity: isPoint ? 0.82 : 0.95,
+                  opacity: isPoint ? 0.9 : 0.96,
                   borderLeft: isPoint ? `2px solid ${RED}` : "none",
                   paddingLeft: isPoint ? "0.75rem" : 0,
                 }}
@@ -153,6 +162,34 @@ export default async function Home() {
               </p>
             );
           })}
+        </div>
+      </section>
+
+      {/* Right now */}
+      <section style={{ marginBottom: "3.5rem" }}>
+        <h2 style={sectionTitle}>Right Now</h2>
+        <div style={{ ...card, lineHeight: 1.8 }}>
+          <p style={{ margin: "0 0 1rem", fontSize: "0.92rem", opacity: 0.96 }}>
+            Two companies, two cities, and a shift in how I spend my time.
+          </p>
+          {[
+            "Scaling TNAADO Labs in Miami — moving from doing every build myself to setting direction and letting senior teams run.",
+            "Mentoring the juniors coming up — the same way I learned, by putting them on real work with real stakes.",
+            "Going deep on the AI side personally — the Dream model family, and Citadel for secure local-first AI.",
+          ].map((t, i) => (
+            <p
+              key={i}
+              style={{
+                margin: "0 0 0.9rem",
+                fontSize: "0.9rem",
+                opacity: 0.9,
+                borderLeft: `2px solid ${RED}`,
+                paddingLeft: "0.75rem",
+              }}
+            >
+              {t}
+            </p>
+          ))}
         </div>
       </section>
 
@@ -180,7 +217,7 @@ export default async function Home() {
                 <h3 style={{ margin: 0, fontSize: "1rem" }}>{p.name}</h3>
                 <StatusBadge status={p.status} />
               </div>
-              <p style={{ margin: 0, fontSize: "0.8rem", lineHeight: 1.6, opacity: 0.7 }}>
+              <p style={{ margin: 0, fontSize: "0.82rem", lineHeight: 1.6, opacity: 0.86 }}>
                 {p.blurb}
               </p>
               {p.url && (
@@ -226,7 +263,7 @@ export default async function Home() {
                       background: "#0a0a0a",
                       border: "1px solid #1c1c1c",
                       borderRadius: 4,
-                      opacity: 0.85,
+                      opacity: 0.95,
                     }}
                   >
                     {item}
@@ -265,7 +302,7 @@ const sectionTitle: React.CSSProperties = {
   fontSize: "0.85rem",
   letterSpacing: "0.2em",
   textTransform: "uppercase",
-  opacity: 0.55,
+  opacity: 0.7,
   marginBottom: "1.25rem",
   borderBottom: "1px solid #161616",
   paddingBottom: "0.6rem",
@@ -283,6 +320,6 @@ const subLabel: React.CSSProperties = {
   fontSize: "0.7rem",
   letterSpacing: "0.15em",
   textTransform: "uppercase",
-  opacity: 0.45,
+  opacity: 0.62,
   margin: "0 0 0.9rem",
 };

@@ -1,0 +1,37 @@
+<svg width="320" height="220" viewBox="0 0 320 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dream Daley">
+  <defs>
+    <linearGradient id="sil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fbfcfd"/>
+      <stop offset="20%" stop-color="#d4d8de"/>
+      <stop offset="44%" stop-color="#f0f2f5"/>
+      <stop offset="60%" stop-color="#9da2aa"/>
+      <stop offset="78%" stop-color="#c2c6cd"/>
+      <stop offset="100%" stop-color="#e6e9ed"/>
+    </linearGradient>
+    <linearGradient id="silEdge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#7e828a" stop-opacity="0.5"/>
+    </linearGradient>
+    <filter id="dds" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0a0a0c" flood-opacity="0.30"/>
+    </filter>
+    <!-- a single filled D letterform, stem-left bowl-right, with counter -->
+    <path id="Dform" fill-rule="evenodd" clip-rule="evenodd"
+      d="M40 26 H96 A84 84 0 0 1 96 194 H40 Z
+         M70 60 H96 A50 50 0 0 1 96 160 H70 Z"/>
+  </defs>
+
+  <g filter="url(#dds)">
+    <!-- right D: mirrored, sits under -->
+    <g transform="translate(320,0) scale(-1,1) translate(118,0)">
+      <use href="#Dform" fill="url(#sil)"/>
+      <use href="#Dform" fill="url(#silEdge)" opacity="0.55"/>
+    </g>
+    <!-- left D: normal, sits over -->
+    <g transform="translate(22,0)">
+      <use href="#Dform" fill="url(#sil)"/>
+      <use href="#Dform" fill="url(#silEdge)" opacity="0.55"/>
+    </g>
+  </g>
+</svg>
